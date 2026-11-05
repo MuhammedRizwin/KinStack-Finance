@@ -44,3 +44,7 @@ The earlier ChatGPT Sites version used a separate Cloudflare database and file b
 ## Member creation function
 
 Source: `supabase/functions/finance-create-member/index.ts`. Deploy to the same Supabase project. Platform JWT verification is disabled because the handler validates the bearer token using `auth.getUser` before checking the caller’s stored superadmin role. New account creation never updates an existing user’s password.
+
+## Appearance
+
+Use the light/dark mode switch in the sidebar, mobile top bar, or sign-in screen. Each browser remembers its chosen theme.

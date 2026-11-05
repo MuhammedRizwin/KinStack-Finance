@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { ThemeToggle } from "../../components/theme-toggle";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "../../lib/supabase/client";
 
@@ -27,6 +28,7 @@ export default function LoginPage() {
   }
 
   return <main className="authpage">
+    <div className="auth-theme"><ThemeToggle /></div>
     <form className="authcard" onSubmit={submit}>
       <img src="/kinstack-logo.png" alt="KinStack Growth Solutions" />
       <p className="eyebrow">FINANCE WORKSPACE</p>
