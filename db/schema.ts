@@ -1,0 +1,6 @@
+import {sqliteTable,text,integer,uniqueIndex} from 'drizzle-orm/sqlite-core';
+export const transactions=sqliteTable('transactions',{id:text('id').primaryKey(),owner:text('owner').notNull(),date:text('date').notNull(),type:text('type').notNull(),amount:integer('amount').notNull(),party:text('party').notNull(),category:text('category').notNull(),description:text('description').notNull(),method:text('method').notNull(),reference:text('reference').notNull(),currency:text('currency').notNull().default('INR'),clientId:text('client_id'),documentId:text('document_id'),recurringId:text('recurring_id'),period:text('period')},t=>[uniqueIndex('recurring_payment_unique').on(t.owner,t.recurringId,t.period)]);
+export const workspaces=sqliteTable('workspaces',{id:text('id').primaryKey(),owner:text('owner').notNull()});
+export const records=sqliteTable('records',{id:text('id').primaryKey(),owner:text('owner').notNull(),kind:text('kind').notNull(),data:text('data').notNull()});
+export const members=sqliteTable('members',{email:text('email').primaryKey(),owner:text('owner').notNull(),role:text('role').notNull()});
+export const receipts=sqliteTable('receipts',{id:text('id').primaryKey(),owner:text('owner').notNull(),transactionId:text('transaction_id').notNull(),name:text('name').notNull(),mime:text('mime').notNull(),size:integer('size').notNull()});

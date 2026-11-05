@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1793801101878,
+      "tag": "0000_broken_justice",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1793897012544,
+      "tag": "0001_foamy_franklin_richards",
+      "breakpoints": true
+    }
+  ]
+}
