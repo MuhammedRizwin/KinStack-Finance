@@ -40,6 +40,25 @@ export async function POST(request: Request) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !["editor", "viewer"].includes(b.role) || email === a.user.email) {
         throw new Error("400:Enter another valid email address and choose Editor or Viewer.");
       }
+      if (!b.existing && b.accountMode !== "existing") {
+        if (typeof b.password !== "string" || b.password.length < 12 || b.password.length > 128) {
+          throw new Error("400:Use a password between 12 and 128 characters.");
+        }
+        const result = await a.supabase.functions.invoke("finance-create-member", {
+          body: { email, password: b.password, role: b.role },
+        });
+        if (result.error) {
+          const response = result.error.context;
+          if (response instanceof Response) {
+            const details = await response.json().catch(() => ({}));
+            return Response.json({ error: details.error || "Unable to create this account." }, {
+              status: [400, 401, 403, 409].includes(response.status) ? response.status : 500,
+            });
+          }
+          throw new Error("Unable to reach account creation. Please try again.");
+        }
+        return Response.json({ ok: true });
+      }
       const saved = await a.supabase.rpc("finance_assign_member", {
         target_workspace: a.workspaceId, target_email: email, target_role: b.role,
       });

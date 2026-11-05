@@ -14,7 +14,7 @@ The superadmin account is restricted to `muhammedrizwinsadique@gmail.com`. The f
 
 1. In the Supabase dashboard, open **Authentication → Users → Add user** and create the superadmin account for `muhammedrizwinsadique@gmail.com` with a password.
 2. The Supabase schema is in `supabase/setup.sql`. It has already been applied to the KinStack Finance project. It creates KinStack-specific tables with row-level security and a private receipt bucket; it leaves the existing generic starter tables alone.
-3. To add a team member, first create their email/password account under **Authentication → Users**. Then sign in as superadmin and assign Editor or Viewer in the app’s **Team** section.
+3. To add a team member, sign in as superadmin and open **Team → Add team member**. Enter their email, password (at least 12 characters), and Editor or Viewer role. Select **Use existing login** for an account that already exists. Share credentials privately; saved passwords are never displayed. The `finance-create-member` Supabase Edge Function creates the account after validating the caller’s superadmin membership. It uses Supabase’s built-in server credentials; no service key is sent to Vercel or the browser.
 
 ## Vercel environment variables
 
@@ -40,3 +40,7 @@ Create `.env.local` in the project root with the three variables above before si
 ## Data migration note
 
 The earlier ChatGPT Sites version used a separate Cloudflare database and file bucket. Those records and receipts are not copied automatically into Supabase. They remain in the earlier app until they are exported and imported separately.
+
+## Member creation function
+
+Source: `supabase/functions/finance-create-member/index.ts`. Deploy to the same Supabase project. Platform JWT verification is disabled because the handler validates the bearer token using `auth.getUser` before checking the caller’s stored superadmin role. New account creation never updates an existing user’s password.
