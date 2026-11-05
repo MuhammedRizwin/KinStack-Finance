@@ -283,3 +283,30 @@ do $$ begin
       foreign key (transaction_id, workspace_id) references public.finance_transactions(id, workspace_id);
   end if;
 end $$;
+
+-- Member profiles: existing memberships keep their access and can be named later.
+alter table public.finance_members add column if not exists name text not null default '' check (char_length(name) <= 120);
+alter table public.finance_members add column if not exists designation text not null default '' check (char_length(designation) <= 120);
+
+create or replace function public.finance_assign_member_profile(
+  target_workspace uuid, target_email text, target_role text,
+  target_name text, target_designation text default ''
+)
+returns void
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+begin
+  if target_name is null or char_length(btrim(target_name)) not between 1 and 120
+    or char_length(coalesce(target_designation, '')) > 120 then
+    raise exception 'Enter a member name (up to 120 characters) and an optional designation (up to 120 characters).' using errcode = '22023';
+  end if;
+  perform public.finance_assign_member(target_workspace, target_email, target_role);
+  update public.finance_members
+    set name = btrim(target_name), designation = btrim(coalesce(target_designation, ''))
+    where workspace_id = target_workspace and email = lower(target_email);
+end;
+$$;
+revoke all on function public.finance_assign_member_profile(uuid, text, text, text, text) from public, anon;
+grant execute on function public.finance_assign_member_profile(uuid, text, text, text, text) to authenticated;

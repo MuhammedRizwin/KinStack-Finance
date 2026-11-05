@@ -12,7 +12,7 @@ export async function GET() {
       a.supabase.from("finance_transactions").select("*").eq("workspace_id", a.workspaceId).order("date", { ascending: false }),
       a.supabase.from("finance_records").select("id,kind,data").eq("workspace_id", a.workspaceId),
       a.role === "superadmin"
-        ? a.supabase.from("finance_members").select("user_id,email,role").eq("workspace_id", a.workspaceId).neq("user_id", a.user.id).order("email")
+        ? a.supabase.from("finance_members").select("user_id,email,role,name,designation").eq("workspace_id", a.workspaceId).neq("user_id", a.user.id).order("email")
         : Promise.resolve({ data: [], error: null }),
       a.supabase.from("finance_receipts").select("id,transaction_id,name,mime,size").eq("workspace_id", a.workspaceId),
     ]);
@@ -40,12 +40,17 @@ export async function POST(request: Request) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !["editor", "viewer"].includes(b.role) || email === a.user.email) {
         throw new Error("400:Enter another valid email address and choose Editor or Viewer.");
       }
+      const name = typeof b.name === "string" ? b.name.trim() : "";
+      const designation = typeof b.designation === "string" ? b.designation.trim() : "";
+      if (!name || name.length > 120 || designation.length > 120) {
+        throw new Error("400:Enter a member name and keep name and designation within 120 characters.");
+      }
       if (!b.existing && b.accountMode !== "existing") {
         if (typeof b.password !== "string" || b.password.length < 12 || b.password.length > 128) {
           throw new Error("400:Use a password between 12 and 128 characters.");
         }
         const result = await a.supabase.functions.invoke("finance-create-member", {
-          body: { email, password: b.password, role: b.role },
+          body: { email, password: b.password, role: b.role, name, designation },
         });
         if (result.error) {
           const response = result.error.context;
@@ -59,8 +64,9 @@ export async function POST(request: Request) {
         }
         return Response.json({ ok: true });
       }
-      const saved = await a.supabase.rpc("finance_assign_member", {
+      const saved = await a.supabase.rpc("finance_assign_member_profile", {
         target_workspace: a.workspaceId, target_email: email, target_role: b.role,
+        target_name: name, target_designation: designation,
       });
       if (saved.error) throw new Error(saved.error.message.includes("account")
         ? `400:${saved.error.message}` : "403:Could not assign that account. Check that its Supabase Auth user exists.");

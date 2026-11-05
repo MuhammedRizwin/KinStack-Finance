@@ -25,6 +25,9 @@ Deno.serve(async (request: Request) => {
     if (membership.error || membership.data.role !== "superadmin") return reply(403, "Only the superadmin can create accounts.");
     const body = await request.json();
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const designation = typeof body.designation === "string" ? body.designation.trim() : "";
+    if (!name || name.length > 120 || designation.length > 120) return reply(400, "Enter a member name and keep name and designation within 120 characters.");
     const password = typeof body.password === "string" ? body.password : "";
     if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email === user.email?.toLowerCase()
       || !["editor", "viewer"].includes(body.role)) return reply(400, "Enter another valid email and choose Editor or Viewer.");
@@ -40,8 +43,9 @@ Deno.serve(async (request: Request) => {
       }
       return reply(400, "Could not create this login. Check the email and password requirements, then try again.");
     }
-    const assigned = await caller.rpc("finance_assign_member", {
+    const assigned = await caller.rpc("finance_assign_member_profile", {
       target_workspace: workspace.data.id, target_email: email, target_role: body.role,
+      target_name: name, target_designation: designation,
     });
     if (assigned.error) {
       // Compensate only for the brand-new login if granting access fails.

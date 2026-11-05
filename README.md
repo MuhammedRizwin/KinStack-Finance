@@ -14,7 +14,7 @@ The superadmin account is restricted to `muhammedrizwinsadique@gmail.com`. The f
 
 1. In the Supabase dashboard, open **Authentication → Users → Add user** and create the superadmin account for `muhammedrizwinsadique@gmail.com` with a password.
 2. The Supabase schema is in `supabase/setup.sql`. It has already been applied to the KinStack Finance project. It creates KinStack-specific tables with row-level security and a private receipt bucket; it leaves the existing generic starter tables alone.
-3. To add a team member, sign in as superadmin and open **Team → Add team member**. Enter their email, password (at least 12 characters), and Editor or Viewer role. Select **Use existing login** for an account that already exists. Share credentials privately; saved passwords are never displayed. The `finance-create-member` Supabase Edge Function creates the account after validating the caller’s superadmin membership. It uses Supabase’s built-in server credentials; no service key is sent to Vercel or the browser.
+3. To add a team member, sign in as superadmin and open **Team → Add team member**. Enter their name, optional designation, email, password (at least 12 characters), and Editor or Viewer role. Names and designations appear in the Team list and can be edited later. Select **Use existing login** for an account that already exists. Share credentials privately; saved passwords are never displayed. The `finance-create-member` Supabase Edge Function creates the account after validating the caller’s superadmin membership. It uses Supabase’s built-in server credentials; no service key is sent to Vercel or the browser.
 
 ## Vercel environment variables
 
