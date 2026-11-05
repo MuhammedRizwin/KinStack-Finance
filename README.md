@@ -1,23 +1,42 @@
 # KinStack Finance
 
-KinStack Finance is a private finance tracker built with React, TypeScript, Vinext, Cloudflare Workers, Cloudflare D1, and R2. The app includes income and expense tracking, clients, invoices and quotations, recurring expenses, receipt uploads, reports, and viewer/editor access controls.
+KinStack Finance is a responsive finance workspace built with Next.js, Supabase Auth, Supabase Postgres, and private Supabase Storage. It supports email/password sign-in, transactions, clients, invoices, quotations, recurring expenses, reports, receipt uploads, and team roles.
 
-## Source package
+## Team roles
 
-This archive contains the project source. It excludes Git metadata, dependencies, build output, local runtime state, and environment files. The `.openai/hosting.json` file describes the existing ChatGPT Sites deployment; it contains no login credentials.
+- **Superadmin** manages team access and all finance records.
+- **Editor** can view and edit finance records.
+- **Viewer** can view and export finance records but cannot change them.
 
-## Upload this project to GitHub
+The superadmin account is restricted to `muhammedrizwinsadique@gmail.com`. The first successful sign-in for that address initializes the workspace. Other accounts have no access until the superadmin assigns a role.
 
-For the safest first upload, use GitHub Desktop:
+## Supabase setup
 
-1. Download and extract `KinStack-Finance-Source.zip`.
-2. In GitHub Desktop, clone `MuhammedRizwin/KinStack-Finance` to your computer.
-3. Copy the extracted project files and folders into that cloned repository. Replace its README with this one if prompted.
-4. In GitHub Desktop, review the changed files, enter a summary such as `Add KinStack Finance source`, and choose **Commit to main**.
-5. Choose **Push origin**.
+1. In the Supabase dashboard, open **Authentication → Users → Add user** and create the superadmin account for `muhammedrizwinsadique@gmail.com` with a password.
+2. The Supabase schema is in `supabase/setup.sql`. It has already been applied to the KinStack Finance project. It creates KinStack-specific tables with row-level security and a private receipt bucket; it leaves the existing generic starter tables alone.
+3. To add a team member, first create their email/password account under **Authentication → Users**. Then sign in as superadmin and assign Editor or Viewer in the app’s **Team** section.
 
-Keep `.env*`, `.dev.vars*`, passwords, and secret keys out of GitHub. The source package does not include finance database records or uploaded receipts.
+## Vercel environment variables
 
-## Current deployment notes
+Set these for Production, Preview, and Development:
 
-This source is configured for the existing ChatGPT Sites runtime. A Vercel deployment requires changing the Cloudflare-specific database, receipt storage, and ChatGPT sign-in integrations to Supabase equivalents first. The Supabase project exists separately and currently has an empty finance schema. No Vercel project is connected yet.
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://iwckfdgirvjvbgvvmiui.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<Supabase publishable key>
+SUPERADMIN_EMAIL=muhammedrizwinsadique@gmail.com
+```
+
+The publishable key is intended for browser use. The project does not put a Supabase service-role or secret key in the app. Never commit `.env.local` or any secret key.
+
+## Run locally
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Create `.env.local` in the project root with the three variables above before signing in. Build with `pnpm build`.
+
+## Data migration note
+
+The earlier ChatGPT Sites version used a separate Cloudflare database and file bucket. Those records and receipts are not copied automatically into Supabase. They remain in the earlier app until they are exported and imported separately.
