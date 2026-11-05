@@ -8,10 +8,10 @@
 
 .memberidentity{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0;overflow-wrap:anywhere}.memberidentity small{color:var(--muted);font-size:12px}@media(max-width:760px){.memberidentity{flex-basis:65%}}
 
-.theme-switch{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:9px 12px;border:1px solid var(--input-border);border-radius:8px;background:var(--surface);color:var(--foreground);font-size:12px;font-weight:600}
+.theme-switch{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;min-height:42px;padding:0;border:1px solid var(--input-border);border-radius:8px;background:var(--surface);color:var(--foreground);font-size:12px;font-weight:600}
 .theme-switch:hover{background:var(--subtle)}.theme-switch svg{flex-shrink:0}.theme-to-light{display:none}[data-theme="dark"] .theme-to-dark{display:none}[data-theme="dark"] .theme-to-light{display:inline}
-.asidebottom .theme-switch{display:flex;width:100%;margin-top:16px}.asidebottom .theme-switch svg{margin:0}.authpage{position:relative;padding-top:76px}.auth-theme{position:absolute;top:18px;right:20px}input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}
+.header-actions{display:flex;align-items:center;gap:18px}.authpage{position:relative;padding-top:76px}.auth-theme{position:absolute;top:18px;right:20px}input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}
 [data-theme="dark"] .brand img,[data-theme="dark"] .mobilebar img,[data-theme="dark"] .authcard>img{background:#fff;border-radius:8px}
 [data-theme="dark"] .authpage{background:radial-gradient(ellipse at top,#34251f 0,transparent 48%),var(--page)}
 [data-theme="dark"] .overlay{background:#050b12b8}[data-theme="dark"] .lineitem{background:var(--subtle)}
-@media(max-width:760px){.mobilebar .theme-switch{width:44px;padding:8px}.mobilebar .theme-label{display:none!important}.auth-theme{right:16px}}
+@media(max-width:760px){.mobilebar .theme-switch{width:44px;height:44px;min-height:44px;padding:0}.auth-theme{right:16px}}

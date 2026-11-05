@@ -47,4 +47,4 @@ Source: `supabase/functions/finance-create-member/index.ts`. Deploy to the same 
 
 ## Appearance
 
-Use the light/dark mode switch in the sidebar, mobile top bar, or sign-in screen. Each browser remembers its chosen theme.
+Use the light/dark mode switch at the top-right of the workspace, mobile top bar, or sign-in screen. Each browser remembers its chosen theme.
