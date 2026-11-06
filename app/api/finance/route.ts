@@ -37,8 +37,8 @@ export async function POST(request: Request) {
     if (b.action === "member") {
       if (a.role !== "superadmin") throw new Error("403:Only the superadmin can manage team access.");
       const email = str(b.email).toLowerCase();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !["editor", "viewer"].includes(b.role) || email === a.user.email) {
-        throw new Error("400:Enter another valid email address and choose Editor or Viewer.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !["superadmin", "editor", "viewer"].includes(b.role) || email === a.user.email) {
+        throw new Error("400:Enter another valid email address and choose Viewer, Editor, or Superadmin.");
       }
       const name = typeof b.name === "string" ? b.name.trim() : "";
       const designation = typeof b.designation === "string" ? b.designation.trim() : "";

@@ -180,8 +180,8 @@ begin
   if not private.has_finance_role(target_workspace, array['superadmin']::text[]) then
     raise exception 'Only the superadmin can manage team access.' using errcode = '42501';
   end if;
-  if lower(target_role) not in ('editor', 'viewer') or position('@' in target_email) < 2 then
-    raise exception 'Choose a valid email address and either editor or viewer.' using errcode = '22023';
+  if target_role is null or lower(target_role) not in ('superadmin', 'editor', 'viewer') or position('@' in target_email) < 2 then
+    raise exception 'Choose a valid email address and viewer, editor, or superadmin.' using errcode = '22023';
   end if;
   select user_row.id into matched_user_id
     from auth.users as user_row
@@ -310,3 +310,46 @@ end;
 $$;
 revoke all on function public.finance_assign_member_profile(uuid, text, text, text, text) from public, anon;
 grant execute on function public.finance_assign_member_profile(uuid, text, text, text, text) to authenticated;
+
+-- Serialize membership changes so concurrent edits cannot remove every superadmin.
+create or replace function private.finance_protect_superadmin()
+returns trigger
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  affected_workspace uuid;
+begin
+  if tg_op = 'INSERT' then affected_workspace := new.workspace_id;
+  else affected_workspace := old.workspace_id;
+  end if;
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(affected_workspace::text, 0));
+  if tg_op = 'UPDATE' then
+    if new.workspace_id <> old.workspace_id or new.user_id <> old.user_id then
+      raise exception 'Membership identity cannot be changed.' using errcode = '23514';
+    end if;
+  end if;
+  if tg_op = 'DELETE' then
+    if old.role = 'superadmin' and not exists (
+      select 1 from public.finance_members
+      where workspace_id = old.workspace_id and role = 'superadmin' and user_id <> old.user_id
+    ) then
+      raise exception 'At least one superadmin must remain in the workspace.' using errcode = '23514';
+    end if;
+    return old;
+  elsif tg_op = 'UPDATE' then
+    if old.role = 'superadmin' and new.role <> 'superadmin' and not exists (
+      select 1 from public.finance_members
+      where workspace_id = old.workspace_id and role = 'superadmin' and user_id <> old.user_id
+    ) then
+      raise exception 'At least one superadmin must remain in the workspace.' using errcode = '23514';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+revoke all on function private.finance_protect_superadmin() from public, anon, authenticated;
+drop trigger if exists finance_protect_superadmin on public.finance_members;
+create trigger finance_protect_superadmin before insert or update or delete
+  on public.finance_members for each row execute function private.finance_protect_superadmin();

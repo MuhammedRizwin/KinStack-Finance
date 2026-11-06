@@ -30,7 +30,7 @@ Deno.serve(async (request: Request) => {
     if (!name || name.length > 120 || designation.length > 120) return reply(400, "Enter a member name and keep name and designation within 120 characters.");
     const password = typeof body.password === "string" ? body.password : "";
     if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email === user.email?.toLowerCase()
-      || !["editor", "viewer"].includes(body.role)) return reply(400, "Enter another valid email and choose Editor or Viewer.");
+      || !["superadmin", "editor", "viewer"].includes(body.role)) return reply(400, "Enter another valid email and choose Viewer, Editor, or Superadmin.");
     if (password.length < 12 || password.length > 128) return reply(400, "Use a password between 12 and 128 characters.");
     // The privileged key is supplied by Supabase's server runtime, never by the web app.
     const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {

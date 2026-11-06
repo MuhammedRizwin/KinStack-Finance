@@ -8,13 +8,13 @@ KinStack Finance is a responsive finance workspace built with Next.js, Supabase 
 - **Editor** can view and edit finance records.
 - **Viewer** can view and export finance records but cannot change them.
 
-The superadmin account is restricted to `muhammedrizwinsadique@gmail.com`. The first successful sign-in for that address initializes the workspace. Other accounts have no access until the superadmin assigns a role.
+The first superadmin account is `muhammedrizwinsadique@gmail.com`; its first successful sign-in initializes the workspace. Superadmins can assign Viewer, Editor, or Superadmin to other members from Team. Each member has one role; Superadmin includes full finance and team access. The database prevents removing or demoting the last superadmin. Other accounts have no workspace access until a superadmin assigns a role.
 
 ## Supabase setup
 
 1. In the Supabase dashboard, open **Authentication → Users → Add user** and create the superadmin account for `muhammedrizwinsadique@gmail.com` with a password.
 2. The Supabase schema is in `supabase/setup.sql`. It has already been applied to the KinStack Finance project. It creates KinStack-specific tables with row-level security and a private receipt bucket; it leaves the existing generic starter tables alone.
-3. To add a team member, sign in as superadmin and open **Team → Add team member**. Enter their name, optional designation, email, password (at least 12 characters), and Editor or Viewer role. Names and designations appear in the Team list and can be edited later. Select **Use existing login** for an account that already exists. Share credentials privately; saved passwords are never displayed. The `finance-create-member` Supabase Edge Function creates the account after validating the caller’s superadmin membership. It uses Supabase’s built-in server credentials; no service key is sent to Vercel or the browser.
+3. To add a team member, sign in as superadmin and open **Team → Add team member**. Enter their name, optional designation, email, password (at least 12 characters), and Viewer, Editor, or Superadmin role. Names and designations appear in the Team list and can be edited later. Select **Use existing login** for an account that already exists. Share credentials privately; saved passwords are never displayed. The `finance-create-member` Supabase Edge Function creates the account after validating the caller’s superadmin membership. It uses Supabase’s built-in server credentials; no service key is sent to Vercel or the browser.
 
 ## Vercel environment variables
 
