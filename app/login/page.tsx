@@ -31,7 +31,7 @@ export default function LoginPage() {
     <div className="auth-theme"><ThemeToggle /></div>
     <form className="authcard" onSubmit={submit}>
       <img src="/kinstack-logo.png" alt="KinStack Growth Solutions" />
-      <p className="eyebrow">FINANCE WORKSPACE</p>
+      <p className="eyebrow">Finance Workspace</p>
       <h1>Sign in</h1>
       <p>Use the email and password provided by your workspace superadmin.</p>
       <label>Email address<input autoComplete="username" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
