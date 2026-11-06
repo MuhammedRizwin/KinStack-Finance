@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { PasswordField } from "../../components/password-field";
 import { ThemeToggle } from "../../components/theme-toggle";
 import { useRouter } from "next/navigation";
@@ -37,6 +38,7 @@ export default function LoginPage() {
       <p>Use the email and password provided by your workspace superadmin.</p>
       <label>Email address<input autoComplete="username" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
       <PasswordField label="Password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
+      <Link className="auth-link auth-link-right" href="/forgot-password">Forgot Password?</Link>
       {error && <div className="error" role="alert">{error}</div>}
       <button className="primary" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in securely"}</button>
       <small>Access is limited to invited KinStack team members.</small>

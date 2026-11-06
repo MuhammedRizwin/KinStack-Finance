@@ -48,3 +48,9 @@ Source: `supabase/functions/finance-create-member/index.ts`. Deploy to the same 
 ## Appearance
 
 Use the light/dark mode switch at the top-right of the workspace, mobile top bar, or sign-in screen. Each browser remembers its chosen theme.
+
+## Password recovery
+
+The sign-in page links to `/forgot-password`. Supabase emails a recovery link, `/auth/recovery` exchanges the PKCE code for a session, and `/reset-password` lets the account owner choose a new password. Recovery links must be opened in the same browser that requested them. Missing, expired, or reused links show a request-new-link screen. Password updates sign the account out of existing refresh sessions.
+
+In Supabase Auth URL Configuration, use `https://kinstack-finance.vercel.app` as Site URL and allow `https://kinstack-finance.vercel.app/auth/recovery` as a redirect URL. The default recovery email template works with this flow. **Custom SMTP is required to send reset emails to ordinary app members**; Supabase’s test sender is restricted to organization team addresses. No SMTP credentials are stored in this repository.
