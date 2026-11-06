@@ -34,3 +34,5 @@
 @media(prefers-reduced-motion:reduce){.workspace-loading-logo,.workspace-loader-ring{animation:none}}
 @media(max-width:600px){.workspace-loader{gap:18px}.workspace-logo-wrap{width:132px;height:132px}.workspace-loading-logo{width:110px;height:87px}}
 @media(max-width:760px){header .header-actions{display:none}}
+
+.loan-heading{margin-bottom:20px;flex-wrap:wrap}.loan-summary{margin-bottom:20px}.loan-balances{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.loan-balances .panel{margin-bottom:0}.loan-history{margin-top:20px;border-top:1px solid var(--line);padding-top:15px}.loan-history summary{cursor:pointer;min-height:44px;padding:10px 0;color:var(--secondary)}@media(max-width:760px){.loan-balances{grid-template-columns:1fr;gap:12px}.loan-heading .primary{width:100%}}

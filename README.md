@@ -62,3 +62,11 @@ Superadmins can open **Team → Edit Member → Change Password**, enter and con
 ## Initial loading
 
 The root route checks the session before rendering the dashboard and loads the initial finance snapshot on the server. Public sign-in/recovery screens skip session-refresh work in the proxy. The dashboard uses the server snapshot without a second mount-time finance request; later mutations refresh through the protected API. A centered animated KinStack logo appears during server loading and sign-in, with reduced-motion support. Private pages and finance responses use no-store caching.
+
+### Member loans
+
+Apply `supabase/member-loans.sql` after `supabase/setup.sql` when setting up a new database. The deployed database already has this schema.
+
+Member Loans tracks principal lent from agency funds, borrower name, currency, loan date, due date, notes, and actual repayments (including partial repayments). Editors and superadmins can create or correct entries; viewers have read-only access. Loan principal, currency and loan date cannot change once repayments exist. Remove an incorrect repayment before replacing it; loans with repayment history cannot be deleted.
+
+Loan movements are separate from business income and expenses. Overview shows available agency funds and outstanding member loans for each currency. Net cash flow and monthly report totals include loans and repayments by their actual dates. The business payments chart and transaction CSV cover business transactions only; loan history is displayed under Member Loans. No money moves automatically. Amounts are stored as integer minor units. Database constraints and triggers validate repayments and serialize concurrent inserts to prevent overpayment.
