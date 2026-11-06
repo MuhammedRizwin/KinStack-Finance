@@ -58,3 +58,7 @@ In Supabase Auth URL Configuration, use `https://kinstack-finance.vercel.app` as
 ## Superadmin password management
 
 Superadmins can open **Team → Edit Member → Change Password**, enter and confirm a new password, then save. This updates only the selected existing member’s password; profile and role edits use their own Save action. `finance-change-member-password` verifies the signed-in caller’s superadmin role and the target’s membership in the same workspace before calling Supabase Auth Admin. It does not reveal old passwords or include plaintext passwords in finance records or responses. This option does not require SMTP. The existing Forgot Password flow remains available and needs a configured email sender for ordinary app members.
+
+## Initial loading
+
+The root route checks the session before rendering the dashboard and loads the initial finance snapshot on the server. Public sign-in/recovery screens skip session-refresh work in the proxy. The dashboard uses the server snapshot without a second mount-time finance request; later mutations refresh through the protected API. A centered animated KinStack logo appears during server loading and sign-in, with reduced-motion support. Private pages and finance responses use no-store caching.

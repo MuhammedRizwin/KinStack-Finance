@@ -13,28 +13,22 @@ export async function access(write = false, superadminOnly = false): Promise<Fin
   if (error || !user || !user.email) throw new Error("401:Please sign in with your email and password.");
 
   const isBootstrapUser = user.email.toLowerCase() === process.env.SUPERADMIN_EMAIL?.toLowerCase();
-  let { data: workspace, error: workspaceError } = await session
-    .from("finance_workspaces").select("id").eq("slug", "kinstack-growth-solutions").maybeSingle();
-  if (workspaceError) throw new Error("Unable to load the finance workspace.");
-
-  if (!workspace && isBootstrapUser) {
-    const bootstrap = await session.rpc("finance_bootstrap_workspace");
-    if (bootstrap.error) throw new Error("Unable to initialize the superadmin account.");
-    const loaded = await session.from("finance_workspaces").select("id")
-      .eq("slug", "kinstack-growth-solutions").single();
-    workspace = loaded.data;
-    workspaceError = loaded.error;
-  }
-  if (!workspace || workspaceError) throw new Error("403:The finance workspace has not been initialized for its superadmin.");
-
-  const membership = await session.from("finance_members").select("role")
-    .eq("workspace_id", workspace.id).eq("user_id", user.id).maybeSingle();
+  const findMembership = () => session.from("finance_members")
+    .select("role,workspace_id,finance_workspaces!inner(slug)")
+    .eq("user_id", user.id).eq("finance_workspaces.slug", "kinstack-growth-solutions").maybeSingle();
+  let membership = await findMembership();
   if (membership.error) throw new Error("Unable to check workspace access.");
+  if (!membership.data && isBootstrapUser) {
+    const bootstrap = await session.rpc("finance_bootstrap_workspace");
+    if (bootstrap.error) throw new Error("403:Unable to initialize this account's finance workspace.");
+    membership = await findMembership();
+    if (membership.error) throw new Error("Unable to check workspace access.");
+  }
   const role = membership.data?.role as FinanceAccess["role"] | undefined;
   if (!role) throw new Error("403:Your account does not have access to this workspace.");
   if (write && role === "viewer") throw new Error("403:Viewers can read and export records but cannot make changes.");
   if (superadminOnly && role !== "superadmin") throw new Error("403:Only the superadmin can manage team access.");
-  return { user: { id: user.id, email: user.email.toLowerCase() }, workspaceId: workspace.id, role, supabase: session };
+  return { user: { id: user.id, email: user.email.toLowerCase() }, workspaceId: membership.data!.workspace_id, role, supabase: session };
 }
 
 export function failure(error: unknown) {

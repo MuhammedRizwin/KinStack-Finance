@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { WorkspaceLoading } from "../../components/workspace-loading";
 import { PasswordField } from "../../components/password-field";
 import { ThemeToggle } from "../../components/theme-toggle";
 import { useRouter } from "next/navigation";
@@ -23,11 +24,14 @@ export default function LoginPage() {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) throw new Error("Email or password is incorrect.");
       router.replace("/");
-      router.refresh();
+
     } catch (problem) {
       setError(problem instanceof Error ? problem.message : "Unable to sign in. Please try again.");
-    } finally { setBusy(false); }
+      setBusy(false);
+    }
   }
+
+  if (busy) return <WorkspaceLoading message="Signing You In…" />;
 
   return <main className="authpage">
     <div className="auth-theme"><ThemeToggle /></div>
