@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { PasswordField } from "../../components/password-field";
 import { ThemeToggle } from "../../components/theme-toggle";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "../../lib/supabase/client";
@@ -35,7 +36,7 @@ export default function LoginPage() {
       <h1>Sign in</h1>
       <p>Use the email and password provided by your workspace superadmin.</p>
       <label>Email address<input autoComplete="username" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
-      <label>Password<input autoComplete="current-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required /></label>
+      <PasswordField label="Password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
       {error && <div className="error" role="alert">{error}</div>}
       <button className="primary" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in securely"}</button>
       <small>Access is limited to invited KinStack team members.</small>

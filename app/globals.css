@@ -22,3 +22,5 @@
 @media(max-width:760px){.mobilebar img{width:62px;height:52px;object-fit:cover;object-position:center}.authpage{margin:0;padding:20px 16px}}
 
 .navlabel,.eyebrow{letter-spacing:.4px;text-transform:none}.navlabel{font-size:11px}.eyebrow{font-size:12px}
+
+.password-field{display:flex;flex-direction:column;gap:7px;min-width:0}.password-field>label{font-size:12px;color:var(--label)}.password-control{position:relative;min-width:0}.password-control>input{width:100%;padding-right:94px}.password-control>button{position:absolute;right:1px;top:1px;bottom:1px;width:84px;min-height:42px;display:flex;align-items:center;justify-content:center;gap:6px;border-left:1px solid var(--input-border);border-radius:0 6px 6px 0;font-size:12px;font-weight:600;color:var(--secondary)}.password-control>button:hover{background:var(--subtle)}
