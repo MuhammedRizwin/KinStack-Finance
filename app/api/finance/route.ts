@@ -34,6 +34,26 @@ export async function POST(request: Request) {
     const b = await request.json() as Body;
     const id = b.id || crypto.randomUUID();
 
+    if (b.action === "memberPassword") {
+      if (a.role !== "superadmin") throw new Error("403:Only superadmins can change member passwords.");
+      if (typeof b.targetUserId !== "string" || b.targetUserId === a.user.id) throw new Error("400:Choose another workspace member.");
+      if (typeof b.password !== "string" || b.password.length < 12 || b.password.length > 128) throw new Error("400:Use a password between 12 and 128 characters.");
+      const result = await a.supabase.functions.invoke("finance-change-member-password", {
+        body: { targetUserId: b.targetUserId, password: b.password },
+      });
+      if (result.error) {
+        const response = result.error.context;
+        if (response instanceof Response) {
+          const details = await response.json().catch(() => ({}));
+          return Response.json({ error: details.error || "Unable to change this password." }, {
+            status: [400, 401, 403, 409].includes(response.status) ? response.status : 500,
+          });
+        }
+        throw new Error("Unable to reach password management. Please try again.");
+      }
+      return Response.json({ ok: true });
+    }
+
     if (b.action === "member") {
       if (a.role !== "superadmin") throw new Error("403:Only the superadmin can manage team access.");
       const email = str(b.email).toLowerCase();
