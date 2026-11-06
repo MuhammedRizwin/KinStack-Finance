@@ -33,3 +33,4 @@
 @keyframes workspace-loader-spin{to{transform:rotate(360deg)}}@keyframes workspace-logo-pulse{0%,100%{opacity:.75;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.workspace-loading-logo,.workspace-loader-ring{animation:none}}
 @media(max-width:600px){.workspace-loader{gap:18px}.workspace-logo-wrap{width:132px;height:132px}.workspace-loading-logo{width:110px;height:87px}}
+@media(max-width:760px){header .header-actions{display:none}}
